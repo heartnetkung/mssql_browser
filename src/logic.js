@@ -30,15 +30,13 @@ exports.printColumns = async(config, table) => {
 					'  ',
 					y['COLUMN_NAME'],
 					' ',
-					y['DATA_TYPE']
+					y['DATA_TYPE']+(y['CHARACTER_MAXIMUM_LENGTH']?`(${y['CHARACTER_MAXIMUM_LENGTH']})`:'')
 				];
 
 				if (y['IS_NULLABLE'] === 'YES')
 					newLine.push('nullable');
 				if (y['COLUMN_DEFAULT'] !== null)
 					newLine.push('default:' + y['COLUMN_DEFAULT']);
-				if (y['CHARACTER_MAXIMUM_LENGTH'] !== null)
-					newLine.push('max:' + y['CHARACTER_MAXIMUM_LENGTH']);
 
 				ans.push(newLine.join(' '));
 			}
