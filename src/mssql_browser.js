@@ -28,17 +28,17 @@ const boilerPlate = function(handler) {
 //setup
 program.version(version);
 
-//columns [table...]
-program
-	.command('columns <config_path> [table_names...]')
-	.description('print all columns from all tables or given tables')
-	.action(boilerPlate(logic.printColumns));
-
 //tables
 program
 	.command('tables <config_path>')
 	.description('print all table names')
 	.action(boilerPlate(logic.printTables));
+
+//columns [table...]
+program
+	.command('columns <config_path> [table_names...]')
+	.description('print all columns from all tables or given tables')
+	.action(boilerPlate(logic.printColumns));
 
 //rows {table} [--max] [where...]
 program
