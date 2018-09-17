@@ -9,6 +9,7 @@ exports.printColumns = async(config, tables) => {
 			ans[x] = a[x];
 		return ans;
 	};
+	const tabAlign = '                    ';
 
 	return await sqlBoilerPlate(config, async(req) => {
 		const SQL =
@@ -23,21 +24,18 @@ exports.printColumns = async(config, tables) => {
 		for (var x in result) {
 			if (tables.length && tables.indexOf(x) === -1)
 				continue;
-
 			ans.push(x);
+
 			for (var y of _.sortBy(result[x], 'COLUMN_NAME')) {
-				var newLine = [
-					'  ',
-					y['COLUMN_NAME'],
-					' ',
-					y['DATA_TYPE'] + (y['CHARACTER_MAXIMUM_LENGTH'] ?
-						`(${y['CHARACTER_MAXIMUM_LENGTH']})` : '')
-				];
+				var newLine = ['  ', y['COLUMN_NAME']];
+				newLine.push(tabAlign.substr(newLine.join(' ').length));
+				newLine.push(y['DATA_TYPE'] + (y['CHARACTER_MAXIMUM_LENGTH'] ?
+					`(${y['CHARACTER_MAXIMUM_LENGTH']})` : ''))
 
 				if (y['IS_NULLABLE'] === 'YES')
 					newLine.push('nullable');
 				if (y['COLUMN_DEFAULT'] !== null)
-					newLine.push('default:' + y['COLUMN_DEFAULT']);
+					newLine.push('default:' + y['COLUMN_DEFAULT'].replace(/^\(N?|\)$/g, ''));
 
 				ans.push(newLine.join(' '));
 			}
