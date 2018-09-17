@@ -2,7 +2,7 @@ const { sqlBoilerPlate } = require('./db');
 const _ = require('lodash');
 
 
-exports.printColumns = async(config, table) => {
+exports.printColumns = async(config, tables) => {
 	const sortKeys = (a) => {
 		var ans = {};
 		for (var x of _.keys(a).sort())
@@ -21,7 +21,7 @@ exports.printColumns = async(config, table) => {
 		result = sortKeys(_.groupBy(result.recordset, 'TABLE_NAME'));
 
 		for (var x in result) {
-			if (table && x !== table)
+			if (tables.length && tables.indexOf(x) === -1)
 				continue;
 
 			ans.push(x);
@@ -30,7 +30,8 @@ exports.printColumns = async(config, table) => {
 					'  ',
 					y['COLUMN_NAME'],
 					' ',
-					y['DATA_TYPE']+(y['CHARACTER_MAXIMUM_LENGTH']?`(${y['CHARACTER_MAXIMUM_LENGTH']})`:'')
+					y['DATA_TYPE'] + (y['CHARACTER_MAXIMUM_LENGTH'] ?
+						`(${y['CHARACTER_MAXIMUM_LENGTH']})` : '')
 				];
 
 				if (y['IS_NULLABLE'] === 'YES')

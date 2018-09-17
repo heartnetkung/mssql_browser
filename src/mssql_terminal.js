@@ -28,10 +28,10 @@ const boilerPlate = function(handler) {
 //setup
 program.version(version);
 
-//columns [--table]
+//columns [table...]
 program
-	.command('columns <config_path> [table_name]')
-	.description('print all columns from all tables or a given table')
+	.command('columns <config_path> [table_names...]')
+	.description('print all columns from all tables or given tables')
 	.action(boilerPlate(logic.printColumns));
 
 //tables
