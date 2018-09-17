@@ -58,7 +58,7 @@ program
 		'print the result along with full transactional output from the database')
 	.description('execute given SQL and return the result')
 	.action(boilerPlate(async(config, sql, options) => {
-		return await logic.execute(config, sql, options.all);
+		return await logic.execute(config, sql, !options.all);
 	}));
 
 //display help
