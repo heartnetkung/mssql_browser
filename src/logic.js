@@ -16,7 +16,6 @@ exports.printColumns = async(config, table) => {
 			SELECT	TABLE_NAME, DATA_TYPE, COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, CHARACTER_MAXIMUM_LENGTH
 			FROM	INFORMATION_SCHEMA.COLUMNS`;
 
-		var req = req.request();
 		var ans = [];
 		var result = await req.query(SQL);
 		result = sortKeys(_.groupBy(result.recordset, 'TABLE_NAME'));
@@ -88,6 +87,5 @@ exports.printRows = async(config, table, max, wheres) => {
 
 	if (whereLine.length)
 		sql += 'WHERE ' + whereLine.join(' AND ');
-	console.log(sql)
 	return await exports.execute(config, sql, true);
 };
