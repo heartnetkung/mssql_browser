@@ -51,7 +51,8 @@ exports.printTables = async(config) => {
 			`
 			SELECT	TABLE_NAME
 			FROM	INFORMATION_SCHEMA.TABLES
-			WHERE	TABLE_TYPE='BASE TABLE'`;
+			WHERE	TABLE_TYPE='BASE TABLE'
+			ORDER BY TABLE_NAME`;
 
 		var ans = await req.query(SQL);
 		ans = ans.recordset.map((a) => a['TABLE_NAME']);
