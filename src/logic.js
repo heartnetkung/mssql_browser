@@ -91,7 +91,7 @@ exports.printRows = async (config, table, max, wheres) => {
 
 	var sql = `
 		SELECT	TOP ${max||3} *
-		FROM	${table}
+		FROM	[${table}]
 	`;
 	var whereLine = [];
 	for (var i = 0, ii = wheres.length; i < ii; i += 2)

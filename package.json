@@ -1,6 +1,6 @@
 {
   "name": "mssql_browser",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "bin": "src/mssql_browser.js",
   "repository": "git@github.com:heartnetkung/mssql_browser.git",
   "author": "heartnetkung <heartnetkung@gmail.com>",
