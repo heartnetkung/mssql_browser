@@ -2,7 +2,7 @@ const { sqlBoilerPlate } = require('./db');
 const _ = require('lodash');
 
 
-exports.printColumns = async(config, tables) => {
+exports.printColumns = async (config, tables) => {
 	const sortKeys = (a) => {
 		var ans = {};
 		for (var x of _.keys(a).sort())
@@ -11,11 +11,23 @@ exports.printColumns = async(config, tables) => {
 	};
 	const tabAlign = '                    ';
 
-	return await sqlBoilerPlate(config, async(req) => {
+	return await sqlBoilerPlate(config, async (req) => {
 		const SQL =
 			`
-			SELECT	TABLE_NAME, DATA_TYPE, COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, CHARACTER_MAXIMUM_LENGTH
-			FROM	INFORMATION_SCHEMA.COLUMNS`;
+			SELECT	
+				i.TABLE_NAME, DATA_TYPE, i.COLUMN_NAME, 
+				IS_NULLABLE, COLUMN_DEFAULT, CHARACTER_MAXIMUM_LENGTH,
+				t.Constraint_Type
+			FROM
+				INFORMATION_SCHEMA.COLUMNS i
+			LEFT JOIN 
+				INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE u 
+			ON 
+				i.TABLE_NAME = u.Table_Name AND i.COLUMN_NAME = u.COLUMN_NAME
+			LEFT JOIN
+				INFORMATION_SCHEMA.TABLE_CONSTRAINTS t
+			ON
+				u.Constraint_Name = t.Constraint_Name AND u.Table_Name = t.Table_Name`;
 
 		var ans = [];
 		var result = await req.query(SQL);
@@ -29,6 +41,8 @@ exports.printColumns = async(config, tables) => {
 			for (var y of _.sortBy(result[x], 'COLUMN_NAME')) {
 				var newLine = ['  ', y['COLUMN_NAME']];
 				newLine.push(tabAlign.substr(newLine.join(' ').length));
+				if (y['Constraint_Type'] === 'PRIMARY KEY')
+					newLine.push('PK');
 				newLine.push(y['DATA_TYPE'] + (y['CHARACTER_MAXIMUM_LENGTH'] ?
 					`(${y['CHARACTER_MAXIMUM_LENGTH']})` : ''))
 
@@ -45,8 +59,8 @@ exports.printColumns = async(config, tables) => {
 };
 
 
-exports.printTables = async(config) => {
-	return await sqlBoilerPlate(config, async(req) => {
+exports.printTables = async (config) => {
+	return await sqlBoilerPlate(config, async (req) => {
 		const SQL =
 			`
 			SELECT	TABLE_NAME
@@ -61,8 +75,8 @@ exports.printTables = async(config) => {
 };
 
 
-exports.execute = async(config, sql, isSelect) => {
-	return await sqlBoilerPlate(config, async(req) => {
+exports.execute = async (config, sql, isSelect) => {
+	return await sqlBoilerPlate(config, async (req) => {
 		var ans = await req.query(sql);
 		if (isSelect)
 			ans = ans.recordset;
@@ -71,7 +85,7 @@ exports.execute = async(config, sql, isSelect) => {
 };
 
 
-exports.printRows = async(config, table, max, wheres) => {
+exports.printRows = async (config, table, max, wheres) => {
 	if (wheres.length % 2 !== 0)
 		throw new Error('wheres must have even number of parameters');
 
